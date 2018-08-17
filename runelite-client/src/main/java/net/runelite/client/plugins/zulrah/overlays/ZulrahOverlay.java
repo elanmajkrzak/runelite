@@ -39,6 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.zulrah.ZulrahInstance;
 import net.runelite.client.plugins.zulrah.ZulrahPlugin;
 import net.runelite.client.plugins.zulrah.phase.ZulrahPhase;
@@ -63,7 +65,7 @@ public class ZulrahOverlay extends Overlay
 	}
 
 	@Override
-	public Dimension render(Graphics2D graphics, java.awt.Point point)
+	public Dimension render(Graphics2D graphics)
 	{
 		ZulrahInstance instance = plugin.getInstance();
 
@@ -79,7 +81,7 @@ public class ZulrahOverlay extends Overlay
 			return null;
 		}
 
-		Point startTile = instance.getStartLocation();
+		WorldPoint startTile = instance.getStartLocation();
 		if (nextPhase != null && currentPhase.getStandLocation() == nextPhase.getStandLocation())
 		{
 			drawStandTiles(graphics, startTile, currentPhase, nextPhase);
@@ -95,10 +97,10 @@ public class ZulrahOverlay extends Overlay
 		return null;
 	}
 
-	private void drawStandTiles(Graphics2D graphics, Point startTile, ZulrahPhase currentPhase, ZulrahPhase nextPhase)
+	private void drawStandTiles(Graphics2D graphics, WorldPoint startTile, ZulrahPhase currentPhase, ZulrahPhase nextPhase)
 	{
-		Point localTile = Perspective.worldToLocal(client, currentPhase.getStandTile(startTile));
-		localTile = new Point(localTile.getX() + Perspective.LOCAL_TILE_SIZE / 2, localTile.getY() + Perspective.LOCAL_TILE_SIZE / 2);
+		LocalPoint localTile = LocalPoint.fromWorld(client, currentPhase.getStandTile(startTile, client.getPlane()));
+		localTile = new LocalPoint(localTile.getX() + Perspective.LOCAL_TILE_SIZE / 2, localTile.getY() + Perspective.LOCAL_TILE_SIZE / 2);
 		Polygon northPoly = getCanvasTileNorthPoly(client, localTile);
 		Polygon southPoly = getCanvasTileSouthPoly(client, localTile);
 		Polygon poly = Perspective.getCanvasTilePoly(client, localTile);
@@ -131,15 +133,15 @@ public class ZulrahOverlay extends Overlay
 		}
 	}
 
-	private void drawStandTile(Graphics2D graphics, Point startTile, ZulrahPhase phase, boolean next)
+	private void drawStandTile(Graphics2D graphics, WorldPoint startTile, ZulrahPhase phase, boolean next)
 	{
 		if (phase == null)
 		{
 			return;
 		}
 
-		Point localTile = Perspective.worldToLocal(client, phase.getStandTile(startTile));
-		localTile = new Point(localTile.getX() + Perspective.LOCAL_TILE_SIZE / 2, localTile.getY() + Perspective.LOCAL_TILE_SIZE / 2);
+		LocalPoint localTile = LocalPoint.fromWorld(client, phase.getStandTile(startTile, client.getPlane()));
+		localTile = new LocalPoint(localTile.getX() + Perspective.LOCAL_TILE_SIZE / 2, localTile.getY() + Perspective.LOCAL_TILE_SIZE / 2);
 		Polygon poly = Perspective.getCanvasTilePoly(client, localTile);
 		Color color = phase.getColor();
 		if (poly != null)
@@ -173,13 +175,13 @@ public class ZulrahOverlay extends Overlay
 		}
 	}
 
-	private void drawZulrahTileMinimap(Graphics2D graphics, Point startTile, ZulrahPhase phase, boolean next)
+	private void drawZulrahTileMinimap(Graphics2D graphics, WorldPoint startTile, ZulrahPhase phase, boolean next)
 	{
 		if (phase == null)
 		{
 			return;
 		}
-		Point zulrahLocalTile = Perspective.worldToLocal(client, phase.getZulrahTile(startTile));
+		LocalPoint zulrahLocalTile = LocalPoint.fromWorld(client, phase.getZulrahTile(startTile, client.getPlane()));
 		Point zulrahMinimapPoint = Perspective.worldToMiniMap(client, zulrahLocalTile.getX(), zulrahLocalTile.getY());
 		Color color = phase.getColor();
 		graphics.setColor(color);
@@ -195,7 +197,7 @@ public class ZulrahOverlay extends Overlay
 		}
 	}
 
-	private Polygon getCanvasTileNorthPoly(Client client, Point localLocation)
+	private Polygon getCanvasTileNorthPoly(Client client, LocalPoint localLocation)
 	{
 		int plane = client.getPlane();
 		int halfTile = Perspective.LOCAL_TILE_SIZE / 2;
@@ -217,7 +219,7 @@ public class ZulrahOverlay extends Overlay
 		return poly;
 	}
 
-	private Polygon getCanvasTileSouthPoly(Client client, Point localLocation)
+	private Polygon getCanvasTileSouthPoly(Client client, LocalPoint localLocation)
 	{
 		int plane = client.getPlane();
 		int halfTile = Perspective.LOCAL_TILE_SIZE / 2;
