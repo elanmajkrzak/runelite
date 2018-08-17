@@ -28,6 +28,7 @@ package net.runelite.client.plugins.zulrah;
 import net.runelite.api.NPC;
 import net.runelite.api.Point;
 import net.runelite.api.Prayer;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.zulrah.patterns.ZulrahPattern;
 import net.runelite.client.plugins.zulrah.phase.StandLocation;
 import net.runelite.client.plugins.zulrah.phase.ZulrahLocation;
@@ -58,7 +59,7 @@ public class ZulrahInstance
 		Prayer.PROTECT_FROM_MISSILES
 	);
 
-	private final Point startLocation;
+	private final WorldPoint startLocation;
 	private ZulrahPattern pattern;
 	private int stage;
 	private ZulrahPhase phase;
@@ -68,7 +69,7 @@ public class ZulrahInstance
 		this.startLocation = zulrah.getWorldLocation();
 	}
 
-	public Point getStartLocation()
+	public WorldPoint getStartLocation()
 	{
 		return startLocation;
 	}

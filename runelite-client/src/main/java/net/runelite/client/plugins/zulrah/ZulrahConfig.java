@@ -28,11 +28,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup(
-	keyName = "zulrah",
-	name = "Zulrah",
-	description = "Configuration for the zulrah plugin"
-)
+@ConfigGroup("zulrah")
 public interface ZulrahConfig extends Config
 {
 	@ConfigItem(

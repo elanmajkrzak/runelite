@@ -32,19 +32,20 @@ import net.runelite.client.plugins.zulrah.phase.ZulrahPhase;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
-import net.runelite.client.ui.overlay.components.ImagePanelComponent;
+import net.runelite.client.ui.overlay.components.ImageComponent;
+import net.runelite.client.ui.overlay.components.PanelComponent;
+import net.runelite.client.ui.overlay.components.TitleComponent;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ZulrahPrayerOverlay extends Overlay
 {
 	private final Client client;
 	private final ZulrahPlugin plugin;
+	private final PanelComponent panelComponent = new PanelComponent();
 
 	@Inject
 	ZulrahPrayerOverlay(@Nullable Client client, ZulrahPlugin plugin)
@@ -53,10 +54,11 @@ public class ZulrahPrayerOverlay extends Overlay
 		setPriority(OverlayPriority.MED);
 		this.client = client;
 		this.plugin = plugin;
+		this.panelComponent.setOrientation(PanelComponent.Orientation.HORIZONTAL);
 	}
 
 	@Override
-	public Dimension render(Graphics2D graphics, Point parent)
+	public Dimension render(Graphics2D graphics)
 	{
 		ZulrahInstance instance = plugin.getInstance();
 
@@ -78,9 +80,9 @@ public class ZulrahPrayerOverlay extends Overlay
 		}
 
 		BufferedImage prayerImage = ZulrahImageManager.getProtectionPrayerBufferedImage(prayer);
-		ImagePanelComponent imagePanelComponent = new ImagePanelComponent();
-		imagePanelComponent.setTitle("Switch!");
-		imagePanelComponent.setImage(prayerImage);
-		return imagePanelComponent.render(graphics, parent);
+		panelComponent.getChildren().clear();
+		panelComponent.getChildren().add(TitleComponent.builder().text("Switch!").build());
+		panelComponent.getChildren().add(new ImageComponent(prayerImage));
+		return panelComponent.render(graphics);
 	}
 }

@@ -53,6 +53,7 @@ import net.runelite.client.plugins.zulrah.patterns.ZulrahPatternD;
 import net.runelite.client.plugins.zulrah.phase.ZulrahPhase;
 import net.runelite.client.task.Schedule;
 import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.QueryRunner;
 
 @PluginDescriptor(
@@ -62,25 +63,28 @@ import net.runelite.client.util.QueryRunner;
 public class ZulrahPlugin extends Plugin
 {
 	@Inject
-	QueryRunner queryRunner;
+	private QueryRunner queryRunner;
 
 	@Inject
-	Client client;
+	private Client client;
 
 	@Inject
-	ZulrahConfig config;
+	private ZulrahConfig config;
 
 	@Inject
-	ZulrahOverlay overlay;
+	private OverlayManager overlayManager;
 
 	@Inject
-	ZulrahCurrentPhaseOverlay currentPhaseOverlay;
+	private ZulrahOverlay overlay;
 
 	@Inject
-	ZulrahNextPhaseOverlay nextPhaseOverlay;
+	private ZulrahCurrentPhaseOverlay currentPhaseOverlay;
 
 	@Inject
-	ZulrahPrayerOverlay zulrahPrayerOverlay;
+	private ZulrahNextPhaseOverlay nextPhaseOverlay;
+
+	@Inject
+	private ZulrahPrayerOverlay zulrahPrayerOverlay;
 
 	private final ZulrahPattern[] patterns = new ZulrahPattern[]
 	{
@@ -105,9 +109,21 @@ public class ZulrahPlugin extends Plugin
 	}
 
 	@Override
-	public Collection<Overlay> getOverlays()
+	protected void startUp() throws Exception
 	{
-		return Arrays.asList(overlay, currentPhaseOverlay, nextPhaseOverlay, zulrahPrayerOverlay);
+		overlayManager.add(overlay);
+		overlayManager.add(currentPhaseOverlay);
+		overlayManager.add(nextPhaseOverlay);
+		overlayManager.add(zulrahPrayerOverlay);
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		overlayManager.remove(overlay);
+		overlayManager.remove(currentPhaseOverlay);
+		overlayManager.remove(zulrahPrayerOverlay);
+		overlayManager.remove(nextPhaseOverlay);
 	}
 
 	@Schedule(

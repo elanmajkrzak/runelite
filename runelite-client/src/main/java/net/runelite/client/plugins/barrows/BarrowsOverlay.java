@@ -40,6 +40,8 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayPriority;
+import net.runelite.client.ui.overlay.components.PanelComponent;
 
 class BarrowsOverlay extends Overlay
 {
@@ -48,12 +50,14 @@ class BarrowsOverlay extends Overlay
 	private final Client client;
 	private final BarrowsPlugin plugin;
 	private final BarrowsConfig config;
+	//private final PanelComponent panelComponent = new PanelComponent();
 
 	@Inject
 	BarrowsOverlay(Client client, BarrowsPlugin plugin, BarrowsConfig config)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		setPriority(OverlayPriority.LOW);
 		this.client = client;
 		this.plugin = plugin;
 		this.config = config;
@@ -92,6 +96,7 @@ class BarrowsOverlay extends Overlay
 		}
 
 		return null;
+		//return panelComponent.render(graphics);
 	}
 
 	private void renderObjects(Graphics2D graphics, Player localPlayer)
