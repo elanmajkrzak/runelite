@@ -46,6 +46,7 @@ public class WidgetID
 	public static final int DEPOSIT_BOX_GROUP_ID = 192;
 	public static final int INVENTORY_GROUP_ID = 149;
 	public static final int FRIENDS_LIST_GROUP_ID = 429;
+	public static final int IGNORE_LIST_GROUP_ID = 432;
 	public static final int RAIDING_PARTY_GROUP_ID = 500;
 	public static final int EQUIPMENT_GROUP_ID = 387;
 	public static final int EQUIPMENT_INVENTORY_GROUP_ID = 85;
@@ -160,6 +161,16 @@ public class WidgetID
 		static final int RED_HEALTH = 23;
 	}
 
+	static class FriendList
+	{
+		static final int TITLE = 3;
+	}
+
+	static class IgnoreList
+	{
+		static final int TITLE = 3;
+	}
+
 	static class ClanChat
 	{
 		static final int TITLE = 1;
@@ -269,15 +280,15 @@ public class WidgetID
 		static final int MINIMAP = 3;
 		static final int MINIMAP_DRAW_AREA = 8;
 		static final int CLAN_CHAT_TAB = 31;
-		static final int FRIENDS_TAB = 32;
-		static final int IGNORES_TAB = 33;
+		static final int FRIENDS_TAB = 33;
+		static final int IGNORES_TAB = 32;
 		static final int LOGOUT_TAB = 34;
 		static final int OPTIONS_TAB = 35;
 		static final int EMOTES_TAB = 36;
 		static final int MUSIC_TAB = 37;
 		static final int CLAN_CHAT_ICON = 38;
-		static final int FRIENDS_ICON = 39;
-		static final int IGNORES_ICON = 40;
+		static final int FRIENDS_ICON = 40;
+		static final int IGNORES_ICON = 39;
 		static final int LOGOUT_ICON = 41;
 		static final int OPTIONS_ICON = 42;
 		static final int EMOTES_ICON = 43;
@@ -304,15 +315,15 @@ public class WidgetID
 	static class ResizableViewport
 	{
 		static final int CLAN_CHAT_TAB = 35;
-		static final int FRIENDS_TAB = 36;
-		static final int IGNORES_TAB = 37;
+		static final int FRIENDS_TAB = 37;
+		static final int IGNORES_TAB = 36;
 		static final int LOGOUT_TAB = 38;
 		static final int OPTIONS_TAB = 39;
 		static final int EMOTES_TAB = 40;
 		static final int MUSIC_TAB = 41;
 		static final int CLAN_CHAT_ICON = 42;
-		static final int FRIENDS_ICON = 43;
-		static final int IGNORES_ICON = 44;
+		static final int FRIENDS_ICON = 44;
+		static final int IGNORES_ICON = 43;
 		static final int LOGOUT_ICON = 45;
 		static final int OPTIONS_ICON = 46;
 		static final int EMOTES_ICON = 47;
