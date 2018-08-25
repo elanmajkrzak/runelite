@@ -46,15 +46,17 @@ public class ZulrahPrayerOverlay extends Overlay
 	private final Client client;
 	private final ZulrahPlugin plugin;
 	private final PanelComponent panelComponent = new PanelComponent();
+	private final ZulrahImageManager zulrahImageManager;
 
 	@Inject
-	ZulrahPrayerOverlay(@Nullable Client client, ZulrahPlugin plugin)
+	ZulrahPrayerOverlay(@Nullable Client client, ZulrahPlugin plugin, ZulrahImageManager zulrahImageManager)
 	{
 		setPosition(OverlayPosition.BOTTOM_RIGHT);
 		setPriority(OverlayPriority.MED);
 		this.client = client;
 		this.plugin = plugin;
 		this.panelComponent.setOrientation(PanelComponent.Orientation.HORIZONTAL);
+		this.zulrahImageManager = zulrahImageManager;
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class ZulrahPrayerOverlay extends Overlay
 			return null;
 		}
 
-		BufferedImage prayerImage = ZulrahImageManager.getProtectionPrayerBufferedImage(prayer);
+		BufferedImage prayerImage = zulrahImageManager.getProtectionPrayerBufferedImage(prayer);
 		panelComponent.getChildren().clear();
 		panelComponent.getChildren().add(TitleComponent.builder().text("Switch!").build());
 		panelComponent.getChildren().add(new ImageComponent(prayerImage));

@@ -26,10 +26,13 @@ package net.runelite.client.plugins.zulrah.overlays;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Prayer;
+import net.runelite.api.SpriteID;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.zulrah.ZulrahPlugin;
 import net.runelite.client.plugins.zulrah.phase.ZulrahType;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +42,14 @@ public class ZulrahImageManager
 {
 	private static final BufferedImage[] zulrahBufferedImages = new BufferedImage[3];
 	private static final BufferedImage[] smallZulrahBufferedImages = new BufferedImage[3];
-	private static final BufferedImage[] prayerBufferedImages = new BufferedImage[2];
+
+	private SpriteManager spriteManager;
+
+	@Inject
+	public ZulrahImageManager(SpriteManager spriteManager)
+	{
+		this.spriteManager = spriteManager;
+	}
 
 	public static BufferedImage getZulrahBufferedImage(ZulrahType type)
 	{
@@ -93,24 +103,10 @@ public class ZulrahImageManager
 		return null;
 	}
 
-	public static BufferedImage getProtectionPrayerBufferedImage(Prayer prayer)
+	public BufferedImage getProtectionPrayerBufferedImage(Prayer prayer)
 	{
-		switch (prayer)
-		{
-			case PROTECT_FROM_MAGIC:
-				if (prayerBufferedImages[0] == null)
-				{
-					prayerBufferedImages[0] = getBufferedImage("/prayers/protect_from_magic.png");
-				}
-				return prayerBufferedImages[0];
-			case PROTECT_FROM_MISSILES:
-				if (prayerBufferedImages[1] == null)
-				{
-					prayerBufferedImages[1] = getBufferedImage("/prayers/protect_from_missiles.png");
-				}
-				return prayerBufferedImages[1];
-		}
-		return null;
+		final int prayerSpriteID = prayer == Prayer.PROTECT_FROM_MAGIC ? SpriteID.PRAYER_PROTECT_FROM_MAGIC : SpriteID.PRAYER_PROTECT_FROM_MISSILES;
+		return spriteManager.getSprite(prayerSpriteID, 0);
 	}
 
 	private static BufferedImage getBufferedImage(String path)
