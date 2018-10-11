@@ -61,6 +61,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ChatboxInputManager;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.banktags.BankTagsConfig;
+import net.runelite.client.plugins.banktags.BankTagsPlugin;
 import static net.runelite.client.plugins.banktags.BankTagsPlugin.CONFIG_GROUP;
 import static net.runelite.client.plugins.banktags.BankTagsPlugin.ICON_SEARCH;
 import static net.runelite.client.plugins.banktags.BankTagsPlugin.TAG_SEARCH;
@@ -223,6 +224,14 @@ public class TabInterface
 			return;
 		}
 
+		if (activeTab != null && client.getVar(VarClientInt.INPUT_TYPE) == InputType.RUNELITE.getType())
+		{
+			// don't reset active tab if we are editing tags
+			updateBounds();
+			scrollTab(0);
+			return;
+		}
+
 		String str = client.getVar(VarClientStr.INPUT_TEXT);
 
 		if (Strings.isNullOrEmpty(str))
@@ -231,7 +240,7 @@ public class TabInterface
 		}
 
 		Widget bankTitle = client.getWidget(WidgetInfo.BANK_TITLE_BAR);
-		if (bankTitle != null && !bankTitle.isHidden())
+		if (bankTitle != null && !bankTitle.isHidden() && !str.startsWith(TAG_SEARCH))
 		{
 			str = bankTitle.getText().replaceFirst("Showing items: ", "");
 
@@ -243,10 +252,9 @@ public class TabInterface
 
 		str = Text.standardize(str);
 
-		if (str.startsWith("tag:"))
+		if (str.startsWith(BankTagsPlugin.TAG_SEARCH))
 		{
-			str = str.substring(4);
-			activateTab(tabManager.find(str));
+			activateTab(tabManager.find(str.substring(TAG_SEARCH.length())));
 		}
 		else
 		{
@@ -541,7 +549,7 @@ public class TabInterface
 	{
 		if (activeTab != null && activeTab.getTag().equals(tag))
 		{
-			doSearch(InputType.SEARCH, "");
+			resetSearch();
 		}
 
 		tabManager.remove(tag);
