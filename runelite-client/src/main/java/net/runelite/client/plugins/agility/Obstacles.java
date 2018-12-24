@@ -114,7 +114,7 @@ class Obstacles
 		// Yanille
 		CASTLE_WALL, HOLE_16520, WALL_17047,
 		// Observatory
-		NULL_31852,
+		NULL_31849,
 		// Gnome Stronghold
 		ROCKS_16534, ROCKS_16535,
 		// Karamja Volcano
@@ -221,7 +221,11 @@ class Obstacles
 		// Burgh de Rott
 		LOW_FENCE,
 		// Taverley
-		STILE
+		STILE,
+		// Asgarnian Ice Dungeon
+		STEPS,
+		// Fossil Island Wyvern Cave
+		STAIRS_31485
 	);
 
 	static final Set<Integer> TRAP_OBSTACLE_IDS = ImmutableSet.of(
