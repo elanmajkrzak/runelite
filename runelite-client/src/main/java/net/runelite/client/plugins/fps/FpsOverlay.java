@@ -27,15 +27,19 @@ package net.runelite.client.plugins.fps;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.io.IOException;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.api.events.FocusChanged;
+import net.runelite.client.plugins.worldhopper.ping.Ping;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.http.api.worlds.WorldClient;
+import net.runelite.http.api.worlds.WorldResult;
 
 /**
  * The built in FPS overlay has a few problems that this one does not have, most of all: it is distracting.
@@ -55,6 +59,9 @@ public class FpsOverlay extends Overlay
 	private final FpsConfig config;
 	private final Client client;
 
+	private WorldResult worldResult;
+	private String ping;
+
 	// Often changing values
 	private boolean isFocused = true;
 
@@ -63,6 +70,14 @@ public class FpsOverlay extends Overlay
 	{
 		this.config = config;
 		this.client = client;
+		try
+		{
+			this.worldResult = new WorldClient().lookupWorlds();
+		}
+		catch (IOException e)
+		{
+			client.getLogger().error("Error looking up worlds", e);
+		}
 		setLayer(OverlayLayer.ABOVE_WIDGETS);
 		setPriority(OverlayPriority.HIGH);
 		setPosition(OverlayPosition.DYNAMIC);
@@ -87,19 +102,45 @@ public class FpsOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (!config.drawFps())
-		{
-			return null;
-		}
-		
-		final String text = client.getFPS() + FPS_STRING;
-		final int textWidth = graphics.getFontMetrics().stringWidth(text);
-		final int textHeight = graphics.getFontMetrics().getAscent() - graphics.getFontMetrics().getDescent();
+		int fpsTextHeight = 0;
+		final String fps = client.getFPS() + FPS_STRING;
 
-		final int width = (int) client.getRealDimensions().getWidth();
-		final Point point = new Point(width - textWidth - VALUE_X_OFFSET, textHeight + Y_OFFSET);
-		OverlayUtil.renderTextLocation(graphics, point, text, getFpsValueColor());
+		if (config.drawFps())
+		{
+			int fpsTextWidth = graphics.getFontMetrics().stringWidth(fps);
+			fpsTextHeight = graphics.getFontMetrics().getAscent() - graphics.getFontMetrics().getDescent();
+			renderText(graphics, fps, fpsTextWidth, fpsTextHeight);
+		}
+
+		final int heightOffset = fpsTextHeight;
+
+		if (config.drawPing())
+		{
+			int pingTextWidth = graphics.getFontMetrics().stringWidth(ping);
+			int pingTextHeight = heightOffset + graphics.getFontMetrics().getAscent() - graphics.getFontMetrics().getDescent();
+			renderText(graphics, ping, pingTextWidth, pingTextHeight);
+		}
 
 		return null;
+	}
+
+	private void renderText(Graphics2D graphics, String text, int textWidth, int textHeight)
+	{
+		final int width = (int) client.getRealDimensions().getWidth();
+
+		final Point point = new Point(width - textWidth - VALUE_X_OFFSET, textHeight + Y_OFFSET);
+		OverlayUtil.renderTextLocation(graphics, point, text, getFpsValueColor());
+	}
+
+	void setPing()
+	{
+		if (worldResult != null)
+		{
+			worldResult.getWorlds()
+				.stream()
+				.filter(world -> world.getId() == client.getWorld())
+				.findFirst()
+				.ifPresent(world -> this.ping = String.valueOf(Ping.ping(world)) + " ms");
+		}
 	}
 }

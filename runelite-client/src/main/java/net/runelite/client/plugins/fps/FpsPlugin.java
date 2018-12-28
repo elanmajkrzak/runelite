@@ -26,6 +26,9 @@ package net.runelite.client.plugins.fps;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.FocusChanged;
 import net.runelite.client.config.ConfigManager;
@@ -34,6 +37,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ExecutorServiceExceptionLogger;
 
 /**
  * FPS Control has two primary areas, this plugin class just keeps those areas up to date and handles setup / teardown.
@@ -55,6 +59,8 @@ public class FpsPlugin extends Plugin
 {
 	static final String CONFIG_GROUP_KEY = "fpscontrol";
 
+	private static final int WORLD_PING_TIMER = 1;
+
 	@Inject
 	private OverlayManager overlayManager;
 
@@ -66,6 +72,8 @@ public class FpsPlugin extends Plugin
 
 	@Inject
 	private DrawManager drawManager;
+
+	private final ScheduledExecutorService hopperExecutorService = new ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor());
 
 	@Provides
 	FpsConfig provideConfig(ConfigManager configManager)
@@ -95,6 +103,7 @@ public class FpsPlugin extends Plugin
 		overlayManager.add(overlay);
 		drawManager.registerEveryFrameListener(drawListener);
 		drawListener.reloadConfig();
+		hopperExecutorService.scheduleAtFixedRate(overlay::setPing, WORLD_PING_TIMER, WORLD_PING_TIMER, TimeUnit.SECONDS);
 	}
 
 	@Override
